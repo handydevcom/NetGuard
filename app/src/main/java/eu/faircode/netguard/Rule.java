@@ -30,8 +30,6 @@ import android.os.Build;
 import android.os.Process;
 import android.util.Log;
 
-import androidx.preference.PreferenceManager;
-
 import org.xmlpull.v1.XmlPullParser;
 
 import java.text.Collator;
@@ -43,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import androidx.preference.PreferenceManager;
 
 public class Rule {
     private static final String TAG = "NetGuard.Rule";
@@ -361,11 +361,24 @@ public class Rule {
                         rule.screen_other_default = default_screen_other;
                         rule.roaming_default = (pre_roaming.containsKey(info.packageName) ? pre_roaming.get(info.packageName) : default_roaming);
 
-                        rule.wifi_blocked = (!(rule.system && !manage_system) && wifi.getBoolean(info.packageName, rule.wifi_default));
-                        rule.other_blocked = (!(rule.system && !manage_system) && other.getBoolean(info.packageName, rule.other_default));
-                        rule.screen_wifi = screen_wifi.getBoolean(info.packageName, rule.screen_wifi_default) && screen_on;
-                        rule.screen_other = screen_other.getBoolean(info.packageName, rule.screen_other_default) && screen_on;
-                        rule.roaming = roaming.getBoolean(info.packageName, rule.roaming_default);
+                        //rule.wifi_blocked = (!(rule.system && !manage_system) && wifi.getBoolean(info.packageName, rule.wifi_default));
+                        //rule.other_blocked = (!(rule.system && !manage_system) && other.getBoolean(info.packageName, rule.other_default));
+                        //rule.screen_wifi = screen_wifi.getBoolean(info.packageName, rule.screen_wifi_default) && screen_on;
+                        //rule.screen_other = screen_other.getBoolean(info.packageName, rule.screen_other_default) && screen_on;
+                        //rule.roaming = roaming.getBoolean(info.packageName, rule.roaming_default);
+                        if (info.packageName.contains("com.cando.chatsie")) {
+                            rule.wifi_blocked = false;
+                            rule.other_blocked = false;
+                            rule.screen_wifi = false;
+                            rule.screen_other = false;
+                            rule.roaming = false;
+                        } else {
+                            rule.wifi_blocked = true;
+                            rule.other_blocked = true;
+                            rule.screen_wifi = false;
+                            rule.screen_other = false;
+                            rule.roaming = true;
+                        }
                         rule.lockdown = lockdown.getBoolean(info.packageName, false);
 
                         rule.apply = apply.getBoolean(info.packageName, true);
