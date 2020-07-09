@@ -251,7 +251,19 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                         }
                                     })
                                     .create();
-                            dialogVpn.show();
+                            //dialogVpn.show();
+
+                            if (running) {
+                                Log.i(TAG, "Start intent=" + prepare);
+                                try {
+                                    // com.android.vpndialogs.ConfirmDialog required
+                                    startActivityForResult(prepare, REQUEST_VPN);
+                                } catch (Throwable ex) {
+                                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                                    onActivityResult(REQUEST_VPN, RESULT_CANCELED, null);
+                                    prefs.edit().putBoolean("enabled", false).apply();
+                                }
+                            }
                         }
                     } catch (Throwable ex) {
                         // Prepare failed
@@ -400,7 +412,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                         }
                     })
                     .create();
-            dialogFirst.show();
+            //dialogFirst.show();
         }
 
         // Fill application list
@@ -721,10 +733,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (Build.VERSION.SDK_INT < MIN_SDK)
+        //if (Build.VERSION.SDK_INT < MIN_SDK)
             return false;
 
-        PackageManager pm = getPackageManager();
+        /*PackageManager pm = getPackageManager();
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
@@ -791,7 +803,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         menu.findItem(R.id.menu_apps).setEnabled(getIntentApps(this).resolveActivity(pm) != null);
 
-        return true;
+        return true;*/
     }
 
     private void markPro(MenuItem menu, String sku) {
@@ -1062,7 +1074,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                 }
                             })
                             .create();
-                    dialogDoze.show();
+                    //dialogDoze.show();
                 } else
                     checkDataSaving();
             } else
