@@ -110,6 +110,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 public class ServiceSinkhole extends VpnService implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "NetGuard.Service";
 
@@ -2562,6 +2564,14 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String name) {
+        if ("enabled".equals(name)) {
+            Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
+            boolean value = prefs.getBoolean(name, false);
+            i.putExtra("com.cando.chatsie.vpn", value);
+            i.addFlags(FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+        }
+
         if ("theme".equals(name)) {
             Log.i(TAG, "Theme changed");
             Util.setTheme(this);

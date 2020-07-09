@@ -19,6 +19,7 @@ package eu.faircode.netguard;
     Copyright 2015-2019 by Marcel Bokhorst (M66B)
 */
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -58,6 +59,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -71,6 +73,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.List;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "NetGuard.Main";
@@ -473,6 +477,18 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Util.logExtras(intent);
         super.onNewIntent(intent);
 
+        if (intent != null && intent.hasExtra("com.cando.chatsie.vpn")) {
+            boolean enabled = intent.getBooleanExtra("com.cando.chatsie.vpn", false);
+            if (enabled) {
+                Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                boolean value = prefs.getBoolean("enabled", false);
+                i.putExtra("com.cando.chatsie.vpn", value);
+                i.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+            }
+        }
+
         if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this))
             return;
 
@@ -586,6 +602,11 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             prefs.edit().putBoolean("enabled", resultCode == RESULT_OK).apply();
             if (resultCode == RESULT_OK) {
+                Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
+                i.putExtra("com.cando.chatsie.vpn", true);
+                i.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+
                 ServiceSinkhole.start("prepared", this);
 
                 Toast on = Toast.makeText(ActivityMain.this, R.string.msg_on, Toast.LENGTH_LONG);
