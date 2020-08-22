@@ -1233,6 +1233,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.unregisterOnSharedPreferenceChangeListener(this);
         prefs.edit().putBoolean("enabled", false).apply();
+        getContentResolver().notifyChange(
+                VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                null
+        );
         ServiceSinkhole.stop("import", this, false);
 
         XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();

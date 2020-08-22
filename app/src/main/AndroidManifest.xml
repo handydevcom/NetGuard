@@ -268,5 +268,10 @@
                 <action android:name="eu.faircode.netguard.LOCKDOWN_OFF" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name=".VPNEnabledProvider"
+            android:authorities="eu.faircode.netguard"
+            android:exported="true" />
     </application>
 </manifest>

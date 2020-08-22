@@ -71,6 +71,10 @@ public class WidgetAdmin extends ReceiverAutostart {
             if (INTENT_ON.equals(intent.getAction()) || INTENT_OFF.equals(intent.getAction())) {
                 boolean enabled = INTENT_ON.equals(intent.getAction());
                 prefs.edit().putBoolean("enabled", enabled).apply();
+                context.getContentResolver().notifyChange(
+                        VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                        null
+                );
                 if (enabled)
                     ServiceSinkhole.start("widget", context);
                 else

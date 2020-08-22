@@ -84,6 +84,10 @@ public class ServiceTileMain extends TileService implements SharedPreferences.On
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean enabled = !prefs.getBoolean("enabled", false);
         prefs.edit().putBoolean("enabled", enabled).apply();
+        getContentResolver().notifyChange(
+                VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                null
+        );
         if (enabled)
             ServiceSinkhole.start("tile", this);
         else {

@@ -195,6 +195,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Log.i(TAG, "Switch=" + isChecked);
                 prefs.edit().putBoolean("enabled", isChecked).apply();
+                getContentResolver().notifyChange(
+                        VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                        null
+                );
 
                 if (isChecked) {
                     String alwaysOn = Settings.Secure.getString(getContentResolver(), "always_on_vpn_app");
@@ -244,6 +248,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                                     Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                                                     onActivityResult(REQUEST_VPN, RESULT_CANCELED, null);
                                                     prefs.edit().putBoolean("enabled", false).apply();
+                                                    getContentResolver().notifyChange(
+                                                            VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                                                            null
+                                                    );
                                                 }
                                             }
                                         }
@@ -266,6 +274,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                     Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                                     onActivityResult(REQUEST_VPN, RESULT_CANCELED, null);
                                     prefs.edit().putBoolean("enabled", false).apply();
+                                    getContentResolver().notifyChange(
+                                            VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                                            null
+                                    );
                                 }
                             }
                         }
@@ -273,6 +285,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                         // Prepare failed
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                         prefs.edit().putBoolean("enabled", false).apply();
+                        getContentResolver().notifyChange(
+                                VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                                null
+                        );
                     }
 
                 } else

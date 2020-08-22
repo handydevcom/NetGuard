@@ -479,6 +479,10 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                         // Disable firewall
                         if (!(ex instanceof StartFailedException)) {
                             prefs.edit().putBoolean("enabled", false).apply();
+                            getContentResolver().notifyChange(
+                                    VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                                    null
+                            );
                             WidgetMain.updateWidgets(ServiceSinkhole.this);
                         }
                     }
@@ -2675,6 +2679,10 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         // Disable firewall (will result in stop command)
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putBoolean("enabled", false).apply();
+        getContentResolver().notifyChange(
+                VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                null
+        );
 
         // Feedback
         showDisabledNotification();
