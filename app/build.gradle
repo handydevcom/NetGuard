@@ -1,17 +1,21 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+def chatsiePropertiesFile = rootProject.file("./Keys/chatsie.properties")
+def chatsieProperties = new Properties()
+
+chatsieProperties.load(new FileInputStream(chatsiePropertiesFile))
+
+
 android {
     compileSdkVersion = 30
 
     defaultConfig {
-        applicationId = "eu.faircode.netguard"
-        versionName = "2.283"
+        applicationId "eu.faircode.netguard"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode = 2020082401
-        archivesBaseName = "NetGuard-v$versionName"
-
+        versionCode 13
+        versionName "VPN 2.283"
         externalNativeBuild {
             cmake {
                 cppFlags ""
@@ -37,7 +41,28 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            storeFile file(chatsieProperties['storeFile'])
+            storePassword chatsieProperties['storePassword']
+            keyAlias chatsieProperties['keyAlias']
+            keyPassword chatsieProperties['keyPassword']
+        }
+    }
+
+
     buildTypes {
+        release {
+            proguardFiles.add(file('proguard-rules.pro'))
+            buildConfigField "boolean", "PLAY_STORE_RELEASE", "false"
+            buildConfigField "String", "HOSTS_FILE_URI", "\"https://www.netguard.me/hosts\""
+            buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/M66B/NetGuard/releases/latest\""
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.release
+
+        }
+
         debug {
             minifyEnabled = true
             useProguard = true
@@ -45,6 +70,12 @@ android {
             buildConfigField "boolean", "PLAY_STORE_RELEASE", "false"
             buildConfigField "String", "HOSTS_FILE_URI", "\"https://www.netguard.me/hosts\""
             buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/M66B/NetGuard/releases/latest\""
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.versionNameOverride = "${defaultConfig.versionName} - ${variant.buildType.name}"
         }
     }
 }
@@ -67,6 +98,11 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    def appCenterSdkVersion = '3.3.0'
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+
 }
 repositories {
     mavenCentral()
