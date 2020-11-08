@@ -30,6 +30,8 @@ import android.os.Build;
 import android.os.Process;
 import android.util.Log;
 
+import androidx.preference.PreferenceManager;
+
 import org.xmlpull.v1.XmlPullParser;
 
 import java.text.Collator;
@@ -42,7 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import androidx.preference.PreferenceManager;
+import eu.faircode.netguard.helper.ChatsieHelper;
 
 public class Rule {
     private static final String TAG = "NetGuard.Rule";
@@ -366,7 +368,8 @@ public class Rule {
                         //rule.screen_wifi = screen_wifi.getBoolean(info.packageName, rule.screen_wifi_default) && screen_on;
                         //rule.screen_other = screen_other.getBoolean(info.packageName, rule.screen_other_default) && screen_on;
                         //rule.roaming = roaming.getBoolean(info.packageName, rule.roaming_default);
-                        if (info.packageName.contains("com.cando.chatsie")) {
+                        
+                        if (info.packageName.contains("com.cando.chatsie") || ChatsieHelper.checkAppPackage(info.packageName, context.getApplicationContext().getContentResolver())) {
                             rule.wifi_blocked = false;
                             rule.other_blocked = false;
                             rule.screen_wifi = false;
