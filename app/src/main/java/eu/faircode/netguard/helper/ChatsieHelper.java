@@ -11,7 +11,7 @@ public class ChatsieHelper {
     private static ArrayList<String> chatsieApps = null;
 
     public static boolean checkAppPackage(String packageName, ContentResolver contentResolver) {
-        if (chatsieApps == null) {
+
             chatsieApps = new ArrayList<>();
             Cursor cursor = contentResolver.query(
                     Uri.parse("content://com.cando.chatsie.mvvmp.main.provider.apps/APPS"),
@@ -25,7 +25,7 @@ public class ChatsieHelper {
                 chatsieApps.add(packageAppName);
             }
             cursor.close();
-        }
+
         Log.d("LogVPN","chatsie apps size " + chatsieApps.size());
 
         return chatsieApps.contains(packageName);

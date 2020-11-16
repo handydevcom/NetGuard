@@ -3240,6 +3240,11 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
     }
 
     public static void start(String reason, Context context) {
+        Log.d("LogVpn","start reason " + reason);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean("enabled", true).apply();
+
         Intent intent = new Intent(context, ServiceSinkhole.class);
         intent.putExtra(EXTRA_COMMAND, Command.start);
         intent.putExtra(EXTRA_REASON, reason);
@@ -3248,6 +3253,9 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
 
     public static void reload(String reason, Context context, boolean interactive) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        Log.d("LogVpn","reload reason " + reason + " enabled " + prefs.getBoolean("enabled", false));
+
         if (prefs.getBoolean("enabled", false)) {
             Intent intent = new Intent(context, ServiceSinkhole.class);
             intent.putExtra(EXTRA_COMMAND, Command.reload);
@@ -3258,11 +3266,18 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
     }
 
     public static void stop(String reason, Context context, boolean vpnonly) {
+        Log.d("LogVpn","stop reason " + reason);
+
+
         Intent intent = new Intent(context, ServiceSinkhole.class);
         intent.putExtra(EXTRA_COMMAND, Command.stop);
         intent.putExtra(EXTRA_REASON, reason);
         intent.putExtra(EXTRA_TEMPORARY, vpnonly);
         ContextCompat.startForegroundService(context, intent);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean("enabled", true).apply();
+
     }
 
     public static void reloadStats(String reason, Context context) {

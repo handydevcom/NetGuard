@@ -368,7 +368,7 @@ public class Rule {
                         //rule.screen_wifi = screen_wifi.getBoolean(info.packageName, rule.screen_wifi_default) && screen_on;
                         //rule.screen_other = screen_other.getBoolean(info.packageName, rule.screen_other_default) && screen_on;
                         //rule.roaming = roaming.getBoolean(info.packageName, rule.roaming_default);
-                        
+
                         if (info.packageName.contains("com.cando.chatsie") || ChatsieHelper.checkAppPackage(info.packageName, context.getApplicationContext().getContentResolver())) {
                             rule.wifi_blocked = false;
                             rule.other_blocked = false;

@@ -52,8 +52,7 @@
         android:description="@string/app_description"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
+         android:supportsRtl="true"
         android:theme="@style/AppThemeTeal"
         tools:ignore="ManifestResource">
 
@@ -171,6 +170,13 @@
             </intent-filter>
         </service>
 
+        <receiver android:name=".helper.VpnReceiver"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="eu.faircode.netguard"/>
+            </intent-filter>
+        </receiver>
         <service
             android:name=".ServiceExternal"
             android:label="@string/app_name">
