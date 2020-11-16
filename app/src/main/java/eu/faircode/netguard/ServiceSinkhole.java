@@ -3276,7 +3276,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         ContextCompat.startForegroundService(context, intent);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putBoolean("enabled", true).apply();
+        prefs.edit().putBoolean("enabled", false).apply();
 
     }
 
