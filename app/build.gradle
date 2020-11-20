@@ -14,7 +14,7 @@ android {
         applicationId "eu.faircode.netguard"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 27
+        versionCode 29
         versionName "VPN 2.283"
         externalNativeBuild {
             cmake {
