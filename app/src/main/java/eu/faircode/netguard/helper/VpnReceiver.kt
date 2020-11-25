@@ -10,15 +10,15 @@ import eu.faircode.netguard.ActivityMain
 import eu.faircode.netguard.ServiceSinkhole
 
 class VpnReceiver : BroadcastReceiver() {
-    //    var prefs = MainPrefs()
-    override fun onReceive(context: Context?, intent: Intent?) {
 
+    override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("VpnLog", "VpnReceiver")
-        val prepare = VpnService.prepare(context)
-        if (prepare == null) {
-            intent?.let {
-                if (it.hasExtra("status")) {
-                    val status = it.getStringExtra("status")
+
+        intent?.let {
+            if (it.hasExtra("status")) {
+                val status = it.getStringExtra("status")
+                val prepare = VpnService.prepare(context)
+                if (prepare == null) {
                     if (status == "start") {
                         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
                         if (prefs.getBoolean("enabled", false)) {
@@ -30,15 +30,17 @@ class VpnReceiver : BroadcastReceiver() {
                     } else if (status == "stop") {
                         ServiceSinkhole.stop("from receiver", context, false)
                     }
+                } else {
+                    if (status == "start") {
+                        val intentActivityMain = Intent(context, ActivityMain::class.java)
+                        intentActivityMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intentActivityMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intentActivityMain.putExtra(ActivityMain.EXTRA_ASK_PERMISSION, "permissions")
+                        context!!.startActivity(intentActivityMain)
+                    }
                 }
             }
-        } else {
-            Log.d("VpnLog", "Prepare not done")
-            val intentActivityMain = Intent(context, ActivityMain::class.java)
-            intentActivityMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intentActivityMain.putExtra(ActivityMain.EXTRA_ASK_PERMISSION,"permissions")
-
-            context!!.startActivity(intentActivityMain)
         }
+
     }
 }
