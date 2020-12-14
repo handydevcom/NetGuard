@@ -50,7 +50,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -67,6 +66,10 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.distribute.Distribute;
+import com.microsoft.appcenter.distribute.UpdateTrack;
 
 import java.util.List;
 
@@ -131,6 +134,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             return;
         }
 
+        Distribute.setUpdateTrack(UpdateTrack.PRIVATE);
+        Distribute.setEnabledForDebuggableBuild(true);
+        Distribute.setEnabled(true);
+
+        AppCenter.start(getApplication(), "cc295700-5f1a-450c-83e1-7100059e78db", Distribute.class);
+
         Util.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -188,63 +197,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         checkReceiverIntent(getIntent());
 
-//        if (getIntent().hasExtra(EXTRA_ASK_PERMISSION)) {
-//            final Intent prepare = VpnService.prepare(ActivityMain.this);
-//            if (prepare != null) {
-//                running = true;
-//                // Show dialog
-//                LayoutInflater inflater = LayoutInflater.from(ActivityMain.this);
-//                View view = inflater.inflate(R.layout.vpn, null, false);
-//                dialogVpn = new AlertDialog.Builder(ActivityMain.this)
-//                        .setView(view)
-//                        .setCancelable(false)
-//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                if (running) {
-//                                    Log.i(TAG, "Start intent=" + prepare);
-//                                    try {
-//                                        // com.android.vpndialogs.ConfirmDialog required
-//                                        startActivityForResult(prepare, REQUEST_VPN);
-//                                    } catch (Throwable ex) {
-//                                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-//                                        onActivityResult(REQUEST_VPN, RESULT_CANCELED, null);
-//                                        prefs.edit().putBoolean("enabled", false).apply();
-//                                        getContentResolver().notifyChange(
-//                                                VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
-//                                                null
-//                                        );
-//                                    }
-//                                }
-//                            }
-//                        })
-//                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                            @Override
-//                            public void onDismiss(DialogInterface dialogInterface) {
-//                                dialogVpn = null;
-//                            }
-//                        })
-//                        .create();
-//                //dialogVpn.show();
-//
-//                if (running) {
-//                    Log.i(TAG, "Start intent=" + prepare);
-//                    try {
-//                        // com.android.vpndialogs.ConfirmDialog required
-//                        startActivityForResult(prepare, REQUEST_VPN);
-//                    } catch (Throwable ex) {
-//                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-//                        onActivityResult(REQUEST_VPN, RESULT_CANCELED, null);
-//                        prefs.edit().putBoolean("enabled", false).apply();
-//                        getContentResolver().notifyChange(
-//                                VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
-//                                null
-//                        );
-//                    }
-//                }
-//            }
-//
-//        }
+
         if (enabled)
             checkDoze();
 
