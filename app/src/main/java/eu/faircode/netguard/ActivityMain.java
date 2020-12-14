@@ -30,6 +30,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.net.VpnService;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -66,6 +67,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.distribute.Distribute;
+import com.microsoft.appcenter.distribute.UpdateTrack;
+
 import java.util.List;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -76,6 +81,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private boolean running = false;
     private ImageView ivIcon;
     private ImageView ivQueue;
+//    private SwitchCompat swEnabled;
     private ImageView ivMetered;
     private SwipeRefreshLayout swipeRefresh;
     private AdapterRule adapter = null;
@@ -99,6 +105,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     public static final String ACTION_QUEUE_CHANGED = "eu.faircode.netguard.ACTION_QUEUE_CHANGED";
     public static final String EXTRA_REFRESH = "Refresh";
     public static final String EXTRA_SEARCH = "Search";
+    public static final String EXTRA_ASK_PERMISSION = "EXTRA_ASK_PERMISSION";
     public static final String EXTRA_RELATED = "Related";
     public static final String EXTRA_APPROVE = "Approve";
     public static final String EXTRA_LOGCAT = "Logcat";
@@ -127,6 +134,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             return;
         }
 
+        Distribute.setUpdateTrack(UpdateTrack.PRIVATE);
+        Distribute.setEnabledForDebuggableBuild(true);
+        Distribute.setEnabled(true);
+
+        AppCenter.start(getApplication(), "cc295700-5f1a-450c-83e1-7100059e78db", Distribute.class);
+
         Util.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -140,17 +153,18 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         // Upgrade
         ReceiverAutostart.upgrade(initialized, this);
 
-        if (!getIntent().hasExtra(EXTRA_APPROVE)) {
-            if (enabled)
-                ServiceSinkhole.start("UI", this);
-            else
-                ServiceSinkhole.stop("UI", this, false);
-        }
+//        if (!getIntent().hasExtra(EXTRA_APPROVE)) {
+//            if (enabled)
+//                ServiceSinkhole.start("UI", this);
+//            else
+//                ServiceSinkhole.stop("UI", this, false);
+//        }
 
         // Action bar
         final View actionView = getLayoutInflater().inflate(R.layout.actionmain, null, false);
         ivIcon = actionView.findViewById(R.id.ivIcon);
         ivQueue = actionView.findViewById(R.id.ivQueue);
+//        swEnabled = actionView.findViewById(R.id.swEnabled);
         ivMetered = actionView.findViewById(R.id.ivMetered);
 
         // Icon
@@ -180,6 +194,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 return true;
             }
         });
+
+        checkReceiverIntent(getIntent());
 
 
         if (enabled)
@@ -374,11 +390,76 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         checkExtras(getIntent());
     }
 
+    void checkReceiverIntent(Intent intent){
+        if (intent.hasExtra(EXTRA_ASK_PERMISSION)) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+            final Intent prepare = VpnService.prepare(ActivityMain.this);
+            if (prepare != null) {
+                running = true;
+                // Show dialog
+                LayoutInflater inflater = LayoutInflater.from(ActivityMain.this);
+                View view = inflater.inflate(R.layout.vpn, null, false);
+                dialogVpn = new AlertDialog.Builder(ActivityMain.this)
+                        .setView(view)
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (running) {
+                                    Log.i(TAG, "Start intent=" + prepare);
+                                    try {
+                                        // com.android.vpndialogs.ConfirmDialog required
+                                        startActivityForResult(prepare, REQUEST_VPN);
+                                    } catch (Throwable ex) {
+                                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                                        onActivityResult(REQUEST_VPN, RESULT_CANCELED, null);
+                                        prefs.edit().putBoolean("enabled", false).apply();
+                                        getContentResolver().notifyChange(
+                                                VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                                                null
+                                        );
+                                    }
+                                }
+                            }
+                        })
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                dialogVpn = null;
+                            }
+                        })
+                        .create();
+                //dialogVpn.show();
+
+                if (running) {
+                    Log.i(TAG, "Start intent=" + prepare);
+                    try {
+                        // com.android.vpndialogs.ConfirmDialog required
+                        startActivityForResult(prepare, REQUEST_VPN);
+                    } catch (Throwable ex) {
+                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        onActivityResult(REQUEST_VPN, RESULT_CANCELED, null);
+                        prefs.edit().putBoolean("enabled", false).apply();
+                        getContentResolver().notifyChange(
+                                VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                                null
+                        );
+                    }
+                }
+            }
+
+        }
+
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         Log.i(TAG, "New intent");
         Util.logExtras(intent);
         super.onNewIntent(intent);
+
+        checkReceiverIntent(intent);
 
         if (intent != null && intent.hasExtra("com.cando.chatsie.vpn")) {
             boolean enabled = intent.getBooleanExtra("com.cando.chatsie.vpn", false);

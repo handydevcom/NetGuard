@@ -14,8 +14,8 @@ android {
         applicationId "eu.faircode.netguard"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 29
-        versionName "VPN 2.283"
+        versionCode 39
+        versionName "Chatsie Notification Blocker 2.283"
         externalNativeBuild {
             cmake {
                 cppFlags ""
@@ -99,9 +99,10 @@ dependencies {
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    def appCenterSdkVersion = '3.3.0'
+    def appCenterSdkVersion = '4.0.0'
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
 
 }
 repositories {
