@@ -135,7 +135,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
 
         Distribute.setUpdateTrack(UpdateTrack.PRIVATE);
-        Distribute.setEnabledForDebuggableBuild(true);
+        Distribute.setEnabledForDebuggableBuild(false);
         Distribute.setEnabled(false);
 
         AppCenter.start(getApplication(), "cc295700-5f1a-450c-83e1-7100059e78db", Distribute.class);

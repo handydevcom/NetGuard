@@ -372,8 +372,8 @@ public class Rule {
                         if (info.packageName.contains("com.cando.chatsie") || info.packageName.contains("com.microsoft.hockeyapp.testerapp") ||ChatsieHelper.checkAppPackage(info.packageName, context.getApplicationContext().getContentResolver())) {
                             rule.wifi_blocked = false;
                             rule.other_blocked = false;
-                            rule.screen_wifi = false;
-                            rule.screen_other = false;
+                            rule.screen_wifi = true;
+                            rule.screen_other = true;
                             rule.roaming = false;
                         } else {
                             rule.wifi_blocked = true;
