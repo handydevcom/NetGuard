@@ -16,7 +16,8 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="BaseThemeDark" parent="Theme.AppCompat.Light.DarkActionBar">
+<!--    <style name="BaseThemeDark" parent="Theme.AppCompat.Light.DarkActionBar">-->
+    <style name="BaseThemeDark" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="expander">@drawable/expander_black</item>
         <item name="iconQueue">@drawable/ic_hourglass_empty_black_24dp</item>
         <item name="iconMetered">@drawable/ic_attach_money_black_24dp</item>
@@ -136,5 +137,19 @@
         <item name="colorAccent">@color/colorGreenAccent</item>
         <item name="colorOn">@color/colorGreenOn</item>
         <item name="colorOff">@color/colorGreenOff</item>
+    </style>
+
+    <style name="ButtonOrange" parent="@android:style/Widget.Button">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginStart">20dp</item>
+    <item name="android:layout_marginEnd">20dp</item>
+    <item name="android:background">@drawable/full_orange_button</item>
+    <item name="android:stateListAnimator">@null</item>
+    <item name="android:paddingTop">14dp</item>
+    <item name="android:paddingBottom">20dp</item>
+    <item name="android:textAllCaps">false</item>
+    <item name="android:textColor">#212529</item>
+    <item name="android:textSize">24sp</item>
     </style>
 </resources>
