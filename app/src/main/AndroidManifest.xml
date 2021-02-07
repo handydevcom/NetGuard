@@ -93,6 +93,9 @@
                 android:resource="@xml/shortcuts" />
         </activity>
 
+        <activity android:name=".InfoUpdateActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".ActivitySettings"
             android:configChanges="orientation|screenSize"

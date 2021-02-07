@@ -186,7 +186,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         setContentView(R.layout.main_copy);
 
 
-
         running = true;
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -314,6 +313,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Handle intent
         checkExtras(getIntent());
+
+        InfoUpdateActivity.checkLauncher(this, getPackageManager());
     }
 
     private void changeStatusUI(boolean isConnected) {
