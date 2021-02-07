@@ -19,6 +19,7 @@ package eu.faircode.netguard;
     Copyright 2015-2019 by Marcel Bokhorst (M66B)
 */
 
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -207,12 +208,17 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         findViewById(R.id.btnOpen).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ActivityMain.this);
-                boolean value = prefs.getBoolean("enabled", false);
-                i.putExtra("com.cando.chatsie.vpn", value);
-                i.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
+                try {
+                    Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ActivityMain.this);
+                    boolean value = prefs.getBoolean("enabled", false);
+                    i.putExtra("com.cando.chatsie.vpn", value);
+                    i.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                } catch (ActivityNotFoundException e) {
+                    InfoUpdateActivity.checkLauncher(ActivityMain.this, getPackageManager());
+                }
+
             }
         });
 
@@ -408,12 +414,17 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             boolean enabled = intent.getBooleanExtra("com.cando.chatsie.vpn", false);
             changeStatusUI(enabled);
             if (enabled) {
+
+                try{
                 Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 boolean value = prefs.getBoolean("enabled", false);
                 i.putExtra("com.cando.chatsie.vpn", value);
                 i.addFlags(FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
+            } catch (ActivityNotFoundException e) {
+                InfoUpdateActivity.checkLauncher(ActivityMain.this, getPackageManager());
+            }
             }
         }
 
@@ -519,10 +530,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             prefs.edit().putBoolean("enabled", resultCode == RESULT_OK).apply();
             if (resultCode == RESULT_OK) {
+                try{
                 Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
                 i.putExtra("com.cando.chatsie.vpn", true);
                 i.addFlags(FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
+                } catch (ActivityNotFoundException e) {
+                    InfoUpdateActivity.checkLauncher(ActivityMain.this, getPackageManager());
+                }
 
                 ServiceSinkhole.start("prepared", this);
 
