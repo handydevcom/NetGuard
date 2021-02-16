@@ -44,4 +44,7 @@
     <color name="colorGrayed">#AAAAAA</color>
     <color name="toolbar_bg">#F8F9FA</color>
 
+    <color name="colorAccent">#03DAC5</color>
+
+
 </resources>

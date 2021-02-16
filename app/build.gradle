@@ -72,6 +72,9 @@ android {
             buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/M66B/NetGuard/releases/latest\""
         }
     }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     applicationVariants.all { variant ->
         variant.outputs.each { output ->

@@ -24,6 +24,7 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -2569,11 +2570,14 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String name) {
         if ("enabled".equals(name)) {
+            try{
             Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
             boolean value = prefs.getBoolean(name, false);
             i.putExtra("com.cando.chatsie.vpn", value);
             i.addFlags(FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
+          } catch (ActivityNotFoundException e) {
+             }
         }
 
         if ("theme".equals(name)) {

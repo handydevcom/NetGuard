@@ -35,16 +35,19 @@ import android.net.VpnService;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +55,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
@@ -60,13 +64,16 @@ import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.distribute.Distribute;
 import com.microsoft.appcenter.distribute.UpdateTrack;
 
+import eu.faircode.netguard.helper.swich.LabeledSwitch;
+import eu.faircode.netguard.helper.swich.OnToggledListener;
+import eu.faircode.netguard.helper.swich.ToggleableView;
+
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final int REQUEST_ROAMING = 4;
     public static final String ACTION_RULES_CHANGED = "eu.faircode.netguard.ACTION_RULES_CHANGED";
     public static final String ACTION_QUEUE_CHANGED = "eu.faircode.netguard.ACTION_QUEUE_CHANGED";
-    //    private SwitchCompat swEnabled;
     public static final String EXTRA_REFRESH = "Refresh";
     public static final String EXTRA_SEARCH = "Search";
     public static final String EXTRA_ASK_PERMISSION = "EXTRA_ASK_PERMISSION";
@@ -81,6 +88,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private static final int REQUEST_INVITE = 2;
     private static final int REQUEST_LOGCAT = 3;
     private static final int MIN_SDK = Build.VERSION_CODES.LOLLIPOP_MR1;
+    //    private SwitchCompat swEnabled;
+    private LabeledSwitch swStatus;
     private boolean running = false;
 
     private AlertDialog dialogFirst = null;
@@ -186,6 +195,38 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_copy);
 
+        if (isLauncherInstalled()) {
+            findViewById(R.id.containerStatus).setVisibility(View.VISIBLE);
+            findViewById(R.id.containerLogic).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.containerStatus).setVisibility(View.GONE);
+            findViewById(R.id.containerLogic).setVisibility(View.VISIBLE);
+        }
+
+        findViewById(R.id.downloadButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String appPackageName = "com.cando.chatsie";
+
+                try {
+                    startActivity(
+                            new Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("market://details?id="+appPackageName)
+                            )
+                    );
+
+                } catch (ActivityNotFoundException e) {
+                    startActivity(
+                            new Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("https://play.google.com/store/apps/details?id"+appPackageName)
+                            )
+                    );
+                }
+            }
+        });
+
 
         running = true;
 
@@ -222,8 +263,118 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             }
         });
 
+        swStatus = findViewById(R.id.swStatus);
+        swStatus.setOn(enabled);
+        changeStatusUI(enabled);
 
-        // Swipe to refresh
+        swStatus.setOnToggledListener(new OnToggledListener() {
+            @Override
+            public void onSwitched(ToggleableView toggleableView, boolean isChecked) {
+                Log.i(TAG, "Switch=" + isChecked);
+                prefs.edit().putBoolean("enabled", isChecked).apply();
+                getContentResolver().notifyChange(
+                        VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                        null
+                );
+
+                if (isChecked) {
+                    String alwaysOn = Settings.Secure.getString(getContentResolver(), "always_on_vpn_app");
+                    Log.i(TAG, "Always-on=" + alwaysOn);
+                    if (!TextUtils.isEmpty(alwaysOn))
+                        if (getPackageName().equals(alwaysOn)) {
+                            if (prefs.getBoolean("filter", false)) {
+                                int lockdown = Settings.Secure.getInt(getContentResolver(), "always_on_vpn_lockdown", 0);
+                                Log.i(TAG, "Lockdown=" + lockdown);
+                                if (lockdown != 0) {
+                                    swStatus.setOn(false);
+                                    changeStatusUI(false);
+                                    Toast.makeText(ActivityMain.this, R.string.msg_always_on_lockdown, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            }
+                        } else {
+                            swStatus.setOn(false);
+                            changeStatusUI(false);
+                            Toast.makeText(ActivityMain.this, R.string.msg_always_on, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                    boolean filter = prefs.getBoolean("filter", false);
+                    if (filter && Util.isPrivateDns(ActivityMain.this))
+                        Toast.makeText(ActivityMain.this, R.string.msg_private_dns, Toast.LENGTH_LONG).show();
+
+                    try {
+                        final Intent prepare = VpnService.prepare(ActivityMain.this);
+                        if (prepare == null) {
+                            Log.i(TAG, "Prepare done");
+                            onActivityResult(REQUEST_VPN, RESULT_OK, null);
+                        } else {
+                            // Show dialog
+                            LayoutInflater inflater = LayoutInflater.from(ActivityMain.this);
+                            View view = inflater.inflate(R.layout.vpn, null, false);
+                            dialogVpn = new AlertDialog.Builder(ActivityMain.this)
+                                    .setView(view)
+                                    .setCancelable(false)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (running) {
+                                                Log.i(TAG, "Start intent=" + prepare);
+                                                try {
+                                                    // com.android.vpndialogs.ConfirmDialog required
+                                                    startActivityForResult(prepare, REQUEST_VPN);
+                                                } catch (Throwable ex) {
+                                                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                                                    onActivityResult(REQUEST_VPN, RESULT_CANCELED, null);
+                                                    prefs.edit().putBoolean("enabled", false).apply();
+                                                    getContentResolver().notifyChange(
+                                                            VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                                                            null
+                                                    );
+                                                }
+                                            }
+                                        }
+                                    })
+                                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                        @Override
+                                        public void onDismiss(DialogInterface dialogInterface) {
+                                            dialogVpn = null;
+                                        }
+                                    })
+                                    .create();
+                            //dialogVpn.show();
+
+                            if (running) {
+                                Log.i(TAG, "Start intent=" + prepare);
+                                try {
+                                    // com.android.vpndialogs.ConfirmDialog required
+                                    startActivityForResult(prepare, REQUEST_VPN);
+                                } catch (Throwable ex) {
+                                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                                    onActivityResult(REQUEST_VPN, RESULT_CANCELED, null);
+                                    prefs.edit().putBoolean("enabled", false).apply();
+                                    getContentResolver().notifyChange(
+                                            VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                                            null
+                                    );
+                                }
+                            }
+                        }
+                    } catch (Throwable ex) {
+                        // Prepare failed
+                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        prefs.edit().putBoolean("enabled", false).apply();
+                        getContentResolver().notifyChange(
+                                VPNEnabledProvider.Companion.getVPN_ENABLED_CONTENT_URI(),
+                                null
+                        );
+                    }
+
+                } else
+                    ServiceSinkhole.stop("switch off", ActivityMain.this, false);
+            }
+        });
+
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
 
@@ -323,15 +474,40 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         InfoUpdateActivity.checkLauncher(this, getPackageManager());
     }
 
+    private Boolean isLauncherInstalled() {
+        Boolean isLauncherInstalled = true;
+        try {
+            getPackageManager().getPackageInfo("com.cando.chatsie", 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            isLauncherInstalled = false;
+        }
+
+        return isLauncherInstalled;
+    }
+
     private void changeStatusUI(boolean isConnected) {
         ImageView imgStatus = findViewById(R.id.imgStatus);
         TextView tvDesc = findViewById(R.id.tvDesc);
+        TextView tvDescNotInstalled = findViewById(R.id.tvDescNotInstalled);
         TextView tvStatus = findViewById(R.id.tvStatus);
         if (isConnected) {
+
+            String descTitle = getResources().getString(R.string.title_desc_on);
+            SpannableStringBuilder str = new SpannableStringBuilder(descTitle);
+            str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, descTitle.indexOf("."), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvDescNotInstalled.setText(str);
+
             imgStatus.setImageResource(R.drawable.ic_status_on);
             tvDesc.setText(R.string.title_on_desc);
             tvStatus.setText(R.string.status_on);
         } else {
+            String descTitle = getResources().getString(R.string.title_desc_off);
+            SpannableStringBuilder str = new SpannableStringBuilder(descTitle);
+            str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, descTitle.indexOf("."), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvDescNotInstalled.setText(str);
+
+
             imgStatus.setImageResource(R.drawable.ic_status_off);
             tvDesc.setText(R.string.tittle_off_desc);
             tvStatus.setText(R.string.status_off);
@@ -415,16 +591,16 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             changeStatusUI(enabled);
             if (enabled) {
 
-                try{
-                Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                boolean value = prefs.getBoolean("enabled", false);
-                i.putExtra("com.cando.chatsie.vpn", value);
-                i.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-            } catch (ActivityNotFoundException e) {
-                InfoUpdateActivity.checkLauncher(ActivityMain.this, getPackageManager());
-            }
+                try {
+                    Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                    boolean value = prefs.getBoolean("enabled", false);
+                    i.putExtra("com.cando.chatsie.vpn", value);
+                    i.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                } catch (ActivityNotFoundException e) {
+                    InfoUpdateActivity.checkLauncher(ActivityMain.this, getPackageManager());
+                }
             }
         }
 
@@ -530,20 +706,20 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             prefs.edit().putBoolean("enabled", resultCode == RESULT_OK).apply();
             if (resultCode == RESULT_OK) {
-                try{
-                Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
-                i.putExtra("com.cando.chatsie.vpn", true);
-                i.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
+                try {
+                    Intent i = new Intent("com.cando.chatsie.mvvmp.dashboard.DashboardActivity");
+                    i.putExtra("com.cando.chatsie.vpn", true);
+                    i.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
                 } catch (ActivityNotFoundException e) {
-                    InfoUpdateActivity.checkLauncher(ActivityMain.this, getPackageManager());
+//                    InfoUpdateActivity.checkLauncher(ActivityMain.this, getPackageManager());
                 }
 
                 ServiceSinkhole.start("prepared", this);
 
-                Toast on = Toast.makeText(ActivityMain.this, R.string.msg_on, Toast.LENGTH_LONG);
-                on.setGravity(Gravity.CENTER, 0, 0);
-                on.show();
+//                Toast on = Toast.makeText(ActivityMain.this, R.string.msg_on, Toast.LENGTH_LONG);
+//                on.setGravity(Gravity.CENTER, 0, 0);
+//                on.show();
 
                 checkDoze();
             } else if (resultCode == RESULT_CANCELED)
@@ -582,6 +758,11 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             // Get enabled
             boolean enabled = prefs.getBoolean(name, false);
             changeStatusUI(enabled);
+
+            if (swStatus.isOn() != enabled) {
+                swStatus.setOn(enabled);
+                changeStatusUI(enabled);
+            }
 
         } else if ("whitelist_wifi".equals(name) ||
                 "screen_on".equals(name) ||
@@ -735,7 +916,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         // Approve request
         if (intent.hasExtra(EXTRA_APPROVE)) {
             Log.i(TAG, "Requesting VPN approval");
-//            swEnabled.toggle();
+            swStatus.setOn(!swStatus.isOn());
+            changeStatusUI(swStatus.isOn());
         }
 
         if (intent.hasExtra(EXTRA_LOGCAT)) {
