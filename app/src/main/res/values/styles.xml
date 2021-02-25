@@ -28,6 +28,8 @@
         <item name="iconPlay">@drawable/ic_play_arrow_black_24dp</item>
         <item name="iconPause">@drawable/ic_pause_black_24dp</item>
         <item name="android:windowDisablePreview">true</item>
+        <item name="font">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
     </style>
 
     <style name="BaseThemeLight" parent="Theme.AppCompat">
@@ -41,6 +43,8 @@
         <item name="iconPlay">@drawable/ic_play_arrow_white_24dp</item>
         <item name="iconPause">@drawable/ic_pause_white_24dp</item>
         <item name="android:windowDisablePreview">true</item>
+        <item name="font">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
     </style>
 
     <style name="AppThemeTeal" parent="BaseThemeDark">
@@ -49,6 +53,8 @@
         <item name="colorAccent">@color/colorTealAccent</item>
         <item name="colorOn">@color/colorTealOn</item>
         <item name="colorOff">@color/colorTealOff</item>
+        <item name="font">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
     </style>
 
     <style name="AppThemeTealDark" parent="BaseThemeLight">
@@ -65,6 +71,7 @@
         <item name="colorAccent">@color/colorBlueAccent</item>
         <item name="colorOn">@color/colorBlueOn</item>
         <item name="colorOff">@color/colorBlueOff</item>
+
     </style>
 
     <style name="AppThemeBlueDark" parent="BaseThemeLight">

@@ -14,7 +14,7 @@ android {
         applicationId "eu.faircode.netguard"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 54
+        versionCode 55
         versionName "Chatsie Notification Blocker 2.283"
         externalNativeBuild {
             cmake {
@@ -87,7 +87,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // https://developer.android.com/jetpack/androidx/releases/
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference:1.1.0'

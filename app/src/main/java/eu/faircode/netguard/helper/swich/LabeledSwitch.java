@@ -282,7 +282,8 @@ public class LabeledSwitch extends ToggleableView {
             int onColor;
 
             if (isEnabled()) {
-                onColor = Color.argb(alpha, Color.red(colorOn), Color.green(colorOn), Color.blue(colorOn));
+//                onColor = Color.argb(alpha, Color.red(colorOn), Color.green(colorOn), Color.blue(colorOn));
+                onColor = Color.argb(alpha, Color.red(colorNew), Color.green(colorNew), Color.blue(colorNew));
             } else {
                 onColor = Color.argb(alpha, Color.red(colorDisabled), Color.green(colorDisabled), Color.blue(colorDisabled));
             }
