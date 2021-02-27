@@ -14,7 +14,7 @@ android {
         applicationId "eu.faircode.netguard"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 55
+        versionCode 57
         versionName "Chatsie Notification Blocker 2.283"
         externalNativeBuild {
             cmake {
@@ -57,10 +57,8 @@ android {
             buildConfigField "boolean", "PLAY_STORE_RELEASE", "false"
             buildConfigField "String", "HOSTS_FILE_URI", "\"https://www.netguard.me/hosts\""
             buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/M66B/NetGuard/releases/latest\""
-            debuggable true
             minifyEnabled false
             signingConfig signingConfigs.release
-
         }
 
         debug {
