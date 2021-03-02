@@ -361,7 +361,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="fingerprint" translatable="false">ef46f813d2c8a064d72c936b9b96d1cccc989378</string>
     <string name="go_to_chatsie_menu" translatable="false">Go to Chatsie Menu</string>
     <string name="notification_blocker" translatable="false">Notification Blocker</string>
-    <string name="title_on_desc" translatable="false">Only apps shown on Chatsie Menu can use the internet. You can add and remove apps from your menu at web.chatsie.com.</string>
+    <string name="title_on_desc" translatable="false">Only apps shown on Chatsie Menu can use the internet. You can add and remove apps from your menu at web.chatsie.com</string>
     <string name="tittle_off_desc" translatable="false">All apps can use the internet. Turn on the Notification Blocker at web.chatsie.com to restrict internet access to apps you choose.</string>
     <string name="status_off" translatable="false">Status: Off</string>
     <string name="status_on" translatable="false">Status: On</string>
