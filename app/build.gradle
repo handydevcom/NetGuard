@@ -11,7 +11,7 @@ android {
     compileSdkVersion = 30
 
     defaultConfig {
-        applicationId "eu.faircode.netguard"
+        applicationId "com.chatsie.notificationblocker"
         minSdkVersion 22
         targetSdkVersion 30
         versionCode 60

@@ -13,3 +13,4 @@
 /app/play
 keystore.properties
 Keys
+fastlane/report.xml
