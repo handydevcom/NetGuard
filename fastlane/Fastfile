@@ -1,0 +1,95 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+lane :increase_version_code do
+  path = '../app/build.gradle'
+  re = /versionCode\s+(\d+)/
+
+  s = File.read(path)
+  versionCode = s[re, 1].to_i
+  s[re, 1] = (versionCode + 1).to_s
+
+  f = File.new(path, 'w')
+  f.write(s)
+  f.close
+end
+
+lane :share_dev do
+     # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
+
+       path = '../app/build.gradle'
+       re = /versionCode\s+(\d+)/
+
+       s = File.read(path)
+       versionCode = s[re, 1].to_i
+       s[re, 1] = (versionCode + 1).to_s
+
+       f = File.new(path, 'w')
+       f.write(s)
+       f.close
+
+     gradle(
+       task: 'assemble',
+       build_type: 'release'
+     )
+
+     appcenter_upload(
+       api_token: ENV['APPCENTER_API_TOKEN'],
+       owner_name: "boychuk.dmitriy",
+       owner_type: "user",
+       app_name: "VPN",
+       file: "./app/build/outputs/apk/release/app-release.apk",
+       notify_testers: true,
+       destinations: "Beta",
+       destination_type: "group",
+       release_notes: "Package Id changed"
+     )
+
+   end
+
+   lane :share_prod do
+     # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
+
+       path = '../app/build.gradle'
+       re = /versionCode\s+(\d+)/
+
+       s = File.read(path)
+       versionCode = s[re, 1].to_i
+       s[re, 1] = (versionCode + 1).to_s
+
+       f = File.new(path, 'w')
+       f.write(s)
+       f.close
+
+     gradle(
+       task: 'assemble',
+       build_type: 'release'
+     )
+
+     appcenter_upload(
+       api_token: ENV['APPCENTER_API_TOKEN'],
+       owner_name: "boychuk.dmitriy",
+       owner_type: "user",
+       app_name: "VPN",
+       file: "./app/build/outputs/apk/release/app-release.apk",
+       notify_testers: true,
+       destinations: "Release",
+       destination_type: "group",
+       release_notes: "Package id changed"
+     )
+
+   end
