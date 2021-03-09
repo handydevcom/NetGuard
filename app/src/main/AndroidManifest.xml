@@ -281,7 +281,7 @@
 
         <provider
             android:name=".VPNEnabledProvider"
-            android:authorities="eu.faircode.netguard"
+            android:authorities="com.chatsie.notificationblocker"
             android:exported="true" />
     </application>
 </manifest>

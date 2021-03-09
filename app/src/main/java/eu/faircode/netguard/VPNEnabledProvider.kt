@@ -63,7 +63,7 @@ class VPNEnabledProvider : ContentProvider() {
     }
 
     companion object {
-        private const val AUTHORITY = "eu.faircode.netguard"
+        private const val AUTHORITY = "com.chatsie.notificationblocker"
         private const val VPN_ENABLED = "VPN_ENABLED"
 
         private const val VPN_ENABLED_CODE = 1
