@@ -23,18 +23,11 @@ class VpnReceiver : BroadcastReceiver() {
                         } else {
                             ServiceSinkhole.start("from receiver", context)
                         }
-
                     } else if (status == "stop") {
                         ServiceSinkhole.stop("from receiver", context, false)
                     }
                 } else {
                     if (status == "start") {
-//                        val intentActivityMain = Intent(context, ActivityMain::class.java)
-//                        intentActivityMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                        intentActivityMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//                        intentActivityMain.putExtra(ActivityMain.EXTRA_ASK_PERMISSION, "permissions")
-//                        context!!.startActivity(intentActivityMain)
-
                         val broadcastIntent = Intent()
                         broadcastIntent.action = "com.cando.chatsie"
                         broadcastIntent.putExtra("status", "start")
