@@ -56,7 +56,7 @@ lane :share_dev do
        notify_testers: true,
        destinations: "Beta",
        destination_type: "group",
-       release_notes: "Fix issues with app control from Chatsie."
+       release_notes: "Updated no-launcher image."
      )
 
    end
@@ -89,7 +89,7 @@ lane :share_dev do
        notify_testers: true,
        destinations: "Release",
        destination_type: "group",
-       release_notes: "Fix issues with app control from Chatsie."
+       release_notes: "Updated no-launcher image."
      )
 
    end

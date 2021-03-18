@@ -14,7 +14,7 @@ android {
         applicationId "com.chatsie.notificationblocker"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 64
+        versionCode 65
         versionName "Chatsie Notification Blocker 2.283"
         externalNativeBuild {
             cmake {

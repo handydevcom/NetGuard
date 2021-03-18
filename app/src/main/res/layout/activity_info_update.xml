@@ -9,7 +9,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_phone_preview"
+        android:src="@mipmap/ic_menu_preview"
         app:layout_constraintBottom_toTopOf="@+id/tvTittle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
