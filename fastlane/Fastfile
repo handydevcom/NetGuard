@@ -15,81 +15,92 @@
 
 default_platform(:android)
 
-lane :increase_version_code do
-  path = '../app/build.gradle'
-  re = /versionCode\s+(\d+)/
+OWNER_NAME = "Chatsie"
+OWNER_TYPE = "organization"
+APP_NAME = "VPN"
 
-  s = File.read(path)
-  versionCode = s[re, 1].to_i
-  s[re, 1] = (versionCode + 1).to_s
+desc "Increment Build version"
+private_lane :get_incremented_build_number do |options|
+    build_number =options[:build_number]
+    incremented = build_number.to_i + 1
+    incremented.to_s
+end
 
-  f = File.new(path, 'w')
-  f.write(s)
-  f.close
+desc "Fetch build version from App Center and update VersionName and VersionCode"
+desc "Return: VersionName"
+private_lane :fetch_version_code do |options|
+    build_data = appcenter_fetch_version_number(
+                 api_token: ENV['APPCENTER_API_TOKEN'],
+                 owner_name: OWNER_NAME,
+                 app_name: options[:app_name]
+              )
+    UI.important("Fastlane appcenter_fetch_build_number - #{build_data}")
+    UI.crash!("build_data not set") if build_data == nil
+
+    app_version_code = nil
+    is_increment = options[:is_increment]
+    if is_increment
+        app_version_code = get_incremented_build_number(build_number: build_data["build_number"])
+    else
+        app_version_code = build_data["build_number"]
+    end
+
+    UI.important("Fastlane app_version_code - #{app_version_code} 🆙")
+
+    ENV["VERSION_CODE"] = app_version_code
+    app_version_code
 end
 
 lane :share_dev do
-     # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
+       changelog = prompt(text: "Enter release notes")
+       app_version_code = fetch_version_code(app_name: APP_NAME, app_center_token: ENV['APPCENTER_API_TOKEN'], is_increment: true)
+        UI.important("Fetch version code - #{app_version_code}")
+        UI.crash!("app_version_code not set") if app_version_code == nil and app_version_code.empty?
 
-       path = '../app/build.gradle'
-       re = /versionCode\s+(\d+)/
+        gradle(task: "clean")
 
-       s = File.read(path)
-       versionCode = s[re, 1].to_i
-       s[re, 1] = (versionCode + 1).to_s
-
-       f = File.new(path, 'w')
-       f.write(s)
-       f.close
-
-     gradle(
+      gradle(
        task: 'assemble',
        build_type: 'release'
      )
 
      appcenter_upload(
        api_token: ENV['APPCENTER_API_TOKEN'],
-       owner_name: "boychuk.dmitriy",
-       owner_type: "user",
-       app_name: "VPN",
+       owner_name: OWNER_NAME,
+      owner_type: OWNER_TYPE,
+      app_name: APP_NAME,
        file: "./app/build/outputs/apk/release/app-release.apk",
        notify_testers: true,
        destinations: "Beta",
        destination_type: "group",
-       release_notes: "Updated no-launcher image."
+              release_notes: changelog
      )
 
    end
 
    lane :share_prod do
-     # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
+    changelog = prompt(text: "Enter release notes")
+           app_version_code = fetch_version_code(app_name: APP_NAME, app_center_token: ENV['APPCENTER_API_TOKEN'], is_increment: true)
+            UI.important("Fetch version code - #{app_version_code}")
+            UI.crash!("app_version_code not set") if app_version_code == nil and app_version_code.empty?
 
-       path = '../app/build.gradle'
-       re = /versionCode\s+(\d+)/
+            gradle(task: "clean")
 
-       s = File.read(path)
-       versionCode = s[re, 1].to_i
-       s[re, 1] = (versionCode + 1).to_s
+          gradle(
+           task: 'assemble',
+           build_type: 'release'
+         )
 
-       f = File.new(path, 'w')
-       f.write(s)
-       f.close
-
-     gradle(
-       task: 'assemble',
-       build_type: 'release'
-     )
-
-     appcenter_upload(
-       api_token: ENV['APPCENTER_API_TOKEN'],
-       owner_name: "boychuk.dmitriy",
-       owner_type: "user",
-       app_name: "VPN",
-       file: "./app/build/outputs/apk/release/app-release.apk",
-       notify_testers: true,
-       destinations: "Release",
-       destination_type: "group",
-       release_notes: "Updated no-launcher image."
-     )
+         appcenter_upload(
+           api_token: ENV['APPCENTER_API_TOKEN'],
+           owner_name: OWNER_NAME,
+          owner_type: OWNER_TYPE,
+          app_name: APP_NAME,
+           file: "./app/build/outputs/apk/release/app-release.apk",
+           notify_testers: true,
+           destinations: "Release",
+           destination_type: "group",
+                  release_notes: changelog
+         )
 
    end
