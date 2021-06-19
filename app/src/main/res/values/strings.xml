@@ -371,4 +371,9 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="download_app" translatable="false">Download Chatsie Menu</string>
     <string name="title_desc_on" translatable="false">Only apps shown on Chatsie Menu can use the internet. You can add and remove apps from your menu at web.chatsie.com</string>
     <string name="title_desc_off" translatable="false">All apps can use the internet.  Turn on the Notification Blocker at web.chatsie.com to restrict internet access to apps you choose.</string>
+
+    <string name="connection_error">There was an error connecting</string>
+    <string name="try_again">Try again</string>
+    <string name="back">Back</string>
+
 </resources>
