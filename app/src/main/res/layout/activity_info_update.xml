@@ -1,61 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		>
 
-    <ImageView
-        android:id="@+id/imgPhone"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="centerInside"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_launcher_permission_logo"
-        app:layout_constraintBottom_toTopOf="@+id/tvTittle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+	<ImageView
+			android:id="@+id/imgPhone"
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			android:layout_margin="16dp"
+			android:scaleType="centerInside"
+			android:src="@drawable/ic_launcher_permission_logo"
+			app:layout_constraintBottom_toTopOf="@+id/tvTittle"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			/>
 
-    <TextView
-        android:id="@+id/tvTittle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:gravity="center"
-        android:text="@string/chatsie_menu_is_not_installed_download_it_now"
-        android:textColor="#212529"
-        android:textFontWeight="500"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/btnPlayStore"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgPhone" />
+	<TextView
+			android:id="@+id/tvTittle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="20dp"
+			android:layout_marginEnd="20dp"
+			android:gravity="center"
+			android:text="@string/chatsie_menu_is_not_installed_download_it_now"
+			android:textColor="#212529"
+			android:textFontWeight="500"
+			android:textSize="30sp"
+			app:layout_constraintBottom_toTopOf="@+id/btnPlayStore"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/imgPhone"
+			/>
 
-    <TextView
-        android:id="@+id/btnPlayStore"
-        style="@style/ButtonOrange"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="10dp"
-        android:gravity="center"
-        android:text="@string/play_store_title"
-        android:textFontWeight="600"
-        app:layout_constraintBottom_toTopOf="@+id/btnNotNow"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+	<TextView
+			android:id="@+id/btnPlayStore"
+			style="@style/ButtonOrange"
+			android:layout_marginTop="40dp"
+			android:layout_marginBottom="10dp"
+			android:gravity="center"
+			android:text="@string/play_store_title"
+			android:textFontWeight="600"
+			app:layout_constraintBottom_toTopOf="@+id/btnNotNow"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			/>
 
-    <TextView
-        android:id="@+id/btnNotNow"
-        style="@style/ButtonOrange"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="36dp"
-        android:background="@drawable/full_white_button"
-        android:gravity="center"
-        android:text="@string/not_now_title"
-        android:textFontWeight="600"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+	<TextView
+			android:id="@+id/btnNotNow"
+			style="@style/ButtonOrange"
+			android:layout_marginTop="40dp"
+			android:layout_marginBottom="36dp"
+			android:background="@drawable/full_white_button"
+			android:gravity="center"
+			android:text="@string/not_now_title"
+			android:textFontWeight="600"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			/>
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/vConnectionTrouble"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="#ffffff"
+			android:clickable="true"
+			android:focusable="true"
+			android:focusableInTouchMode="true"
+			android:visibility="gone"
+			>
+
+		<FrameLayout
+				android:id="@+id/vContainerBack"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				app:layout_constraintTop_toTopOf="parent"
+				android:background="#FBC964"
+				>
+
+			<androidx.appcompat.widget.LinearLayoutCompat
+					android:id="@+id/llBack"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="20dp"
+					android:layout_marginTop="14dp"
+					android:layout_marginBottom="14dp"
+					android:elevation="10dp"
+					android:background="@drawable/full_white_button_new"
+					android:gravity="center"
+					android:orientation="horizontal"
+					android:paddingStart="20dp"
+					android:paddingTop="8dp"
+					android:paddingEnd="20dp"
+					android:paddingBottom="8dp"
+
+					>
+
+				<androidx.appcompat.widget.AppCompatImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						app:srcCompat="@drawable/ic_back_toolbar"
+						app:tint="#212529"
+						/>
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="12dp"
+						android:layout_marginEnd="40dp"
+						android:textFontWeight="600"
+						android:textColor="#212529"
+						android:text="@string/back"
+						android:textSize="20sp"
+						/>
+
+			</androidx.appcompat.widget.LinearLayoutCompat>
+
+		</FrameLayout>
+
+
+		<TextView
+				android:id="@+id/tvErrorTitle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="20dp"
+				android:layout_marginEnd="20dp"
+				android:gravity="center_horizontal"
+				android:text="@string/connection_error"
+				android:textColor="#212529"
+				android:textFontWeight="600"
+				android:textSize="20sp"
+				app:layout_constraintBottom_toTopOf="@+id/ivError"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/vContainerBack"
+				/>
+
+		<ImageView
+				android:id="@+id/ivError"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="50dp"
+				android:src="@drawable/ic_no_calls"
+				app:layout_constraintBottom_toTopOf="@+id/bErrorTryAgain"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/tvErrorTitle"
+				/>
+
+		<TextView
+				android:id="@+id/bErrorTryAgain"
+				style="@style/ButtonOrange"
+				android:layout_marginBottom="32dp"
+				android:gravity="center"
+				android:text="@string/try_again"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				/>
+
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

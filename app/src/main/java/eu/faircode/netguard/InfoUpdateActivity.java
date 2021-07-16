@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import eu.faircode.netguard.helper.ConnectionHelper;
 
 public class InfoUpdateActivity extends AppCompatActivity {
 
@@ -42,27 +43,46 @@ public class InfoUpdateActivity extends AppCompatActivity {
         findViewById(R.id.btnPlayStore).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String appPackageName = "com.cando.chatsie";
 
-                try {
-                    startActivity(
-                            new Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse("market://details?id=" + appPackageName)
-                            )
-                    );
-                    finish();
-                } catch (ActivityNotFoundException e) {
-                    startActivity(
-                            new Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)
-                            )
-                    );
-                    finish();
+                if(ConnectionHelper.getInstance().isNetworkAvailable(getApplicationContext())) {
+                    openMarket();
+                } else {
+                    findViewById(R.id.vConnectionTrouble).setVisibility(View.VISIBLE);
+
+                    findViewById(R.id.bErrorTryAgain).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(ConnectionHelper.getInstance().isNetworkAvailable(getApplicationContext())) {
+                                openMarket();
+                                finish();
+                            }
+                        }
+                    });
                 }
             }
         });
 
+    }
+
+    private void openMarket() {
+        String appPackageName = "com.cando.chatsie";
+
+        try {
+            startActivity(
+                new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=" + appPackageName)
+                )
+            );
+            finish();
+        } catch (ActivityNotFoundException e) {
+            startActivity(
+                new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)
+                )
+            );
+            finish();
+        }
     }
 }
